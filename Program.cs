@@ -16,6 +16,7 @@ namespace Maxwell_Wheel
         {
             SplashScreen.ShowSplashScreen();
             MainForm mainForm = new MainForm(); //this takes ages
+            System.Threading.Thread.Sleep(5000);
             SplashScreen.CloseForm();
             Application.Run(mainForm);
         }
