@@ -16,5 +16,11 @@ namespace Maxwell_Wheel
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (this.Width - this.panel1.Location.X == 50) this.panel1.Left = this.Width - this.Width / 4;
+            else if (this.Width - this.panel1.Location.X != 50) this.panel1.Left = this.Width - 50;
+        }
     }
 }

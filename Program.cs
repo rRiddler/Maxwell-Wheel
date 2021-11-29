@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
-
+using SharpGL;
 namespace Maxwell_Wheel
 {
 
@@ -20,6 +20,8 @@ namespace Maxwell_Wheel
             //System.Threading.Thread.Sleep(5000);
             SplashScreen.CloseForm();
             Application.Run(mainForm);
+            System.Threading.Thread.Sleep(500);
+            
         }
     }
 
