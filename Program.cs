@@ -20,6 +20,7 @@ namespace Maxwell_Wheel
             //System.Threading.Thread.Sleep(5000);
             SplashScreen.CloseForm();
             Application.Run(mainForm);
+            mainForm.Focus();
             System.Threading.Thread.Sleep(500);
             
         }

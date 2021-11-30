@@ -25,7 +25,7 @@ namespace Maxwell_Wheel
         {
             for(int i = 0; i < 100; i += 10)
             {
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(10);
                 splashForm.progressBar1.Invoke((MethodInvoker)delegate {
                     // Running on the UI thread
                     splashForm.progressBar1.Value = i;
