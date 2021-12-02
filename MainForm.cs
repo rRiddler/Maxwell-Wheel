@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SharpGL.SceneGraph.Effects;
+using SharpGL.SceneGraph.Primitives;
+using SharpGL.Serialization.Wavefront;
 
 
 namespace Maxwell_Wheel
@@ -15,15 +19,78 @@ namespace Maxwell_Wheel
     public partial class MainForm : Form
     {
 
-        float rtri = 0;
-        float rtry = 0.0f;
-        bool flag = false;
+        private readonly ArcBallEffect arcBallEffect = new ArcBallEffect();
+
         public MainForm()
         {
             InitializeComponent();
+            InitializeScene();
             this.CenterToScreen();
         }
 
+        private void InitializeScene()
+        {
+            mainScene.MouseDown += new MouseEventHandler(sceneControl_MouseDown);
+            mainScene.MouseMove += new MouseEventHandler(sceneControl_MouseMove);
+            mainScene.MouseUp += new MouseEventHandler(sceneControl_MouseUp);
+            // Let's load ducky
+            var obj = new ObjFileFormat();
+            var objScene = obj.LoadData(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "Wheel.obj"));
+
+            // Add the materials to the scene
+            foreach (var asset in objScene.Assets)
+                mainScene.Scene.Assets.Add(asset);
+
+            // Get the polygons
+            var polygons = objScene.SceneContainer.Traverse<Polygon>().ToList();
+
+            // Add each polygon (There is only one in ducky.obj)
+            foreach (var polygon in polygons)
+            {
+                polygon.Name = "Qube";
+                polygon.Transformation.RotateX = 90f; // So that Ducky appears in the right orientation
+
+                //  Get the bounds of the polygon.
+                var boundingVolume = polygon.BoundingVolume;
+                var extent = new float[3];
+                polygon.BoundingVolume.GetBoundDimensions(out extent[0], out extent[1], out extent[2]);
+
+                // Get the max extent.
+                var maxExtent = extent.Max();
+
+                // Scale so that we are at most 10 units in size.
+                var scaleFactor = maxExtent > 10 ? 10.0f / maxExtent : 1;
+
+                polygon.Parent.RemoveChild(polygon);
+                polygon.Transformation.ScaleX = scaleFactor;
+                polygon.Transformation.ScaleY = scaleFactor;
+                polygon.Transformation.ScaleZ = scaleFactor;
+                polygon.Freeze(mainScene.OpenGL);
+                mainScene.Scene.SceneContainer.AddChild(polygon);
+
+                // Add effects.
+                polygon.AddEffect(new OpenGLAttributesEffect());
+                polygon.AddEffect(arcBallEffect);
+            }
+
+        }
+
+        private void sceneControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            arcBallEffect.ArcBall.SetBounds(mainScene.Width, mainScene.Height);
+            arcBallEffect.ArcBall.MouseDown(e.X, e.Y);
+        }
+
+        private void sceneControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                arcBallEffect.ArcBall.MouseMove(e.X, e.Y);
+        }
+
+        private void sceneControl_MouseUp(object sender, MouseEventArgs e)
+        {
+            arcBallEffect.ArcBall.MouseUp(e.X, e.Y);
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             if (this.Width - this.sidePanel.Location.X == constants.side_Panel_Size)
@@ -43,74 +110,6 @@ namespace Maxwell_Wheel
             }
         }
 
-        private void openGLControl1_Load(object sender, EventArgs e)
-        {
 
-        }
-
-        private void openGLControl1_OpenGLDraw(object sender, SharpGL.RenderEventArgs e)
-        {
-            //  Get the OpenGL object, just to clean up the code.
-            SharpGL.OpenGL gl = this.openGLControl1.OpenGL;
-
-            gl.Clear(SharpGL.OpenGL.GL_COLOR_BUFFER_BIT | SharpGL.OpenGL.GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
-            gl.LoadIdentity();                  // Reset The View
-
-            // gl.Color(1.0f, 1.0f, 1.0f);
-            // gl.FontBitmaps.DrawText(gl, 0, 0, "Arial", "Argh");
-
-
-
-            gl.Translate(-1.5f, 0.0f, -6.0f);				// Move Left And Into The Screen
-
-            gl.Rotate(rtri, 0.0f, 1.0f, 0.0f);				// Rotate The Pyramid On It's Y Axis
-
-            gl.Begin(SharpGL.OpenGL.GL_TRIANGLES);					// Start Drawing The Pyramid
-
-            gl.Color(1.0f, 0.0f, 0.0f);			// Red
-            gl.Vertex(0.0f, 1.0f + rtry, 0.0f);			// Top Of Triangle (Front)
-            gl.Color(0.0f, 1.0f, 0.0f);			// Green
-            gl.Vertex(-1.0f, -1.0f + rtry, 1.0f);			// Left Of Triangle (Front)
-            gl.Color(0.0f, 0.0f, 1.0f);			// Blue
-            gl.Vertex(1.0f, -1.0f + rtry, 1.0f);			// Right Of Triangle (Front)
-
-            gl.Color(1.0f, 0.0f, 0.0f);			// Red
-            gl.Vertex(0.0f, 1.0f + rtry, 0.0f);			// Top Of Triangle (Right)
-            gl.Color(0.0f, 0.0f, 1.0f);			// Blue
-            gl.Vertex(1.0f, -1.0f + rtry, 1.0f);			// Left Of Triangle (Right)
-            gl.Color(0.0f, 1.0f, 0.0f);			// Green
-            gl.Vertex(1.0f, -1.0f + rtry, -1.0f);			// Right Of Triangle (Right)
-
-            gl.Color(1.0f, 0.0f, 0.0f);			// Red
-            gl.Vertex(0.0f, 1.0f + rtry, 0.0f);			// Top Of Triangle (Back)
-            gl.Color(0.0f, 1.0f, 0.0f);			// Green
-            gl.Vertex(1.0f, -1.0f + rtry, -1.0f);			// Left Of Triangle (Back)
-            gl.Color(0.0f, 0.0f, 1.0f);			// Blue
-            gl.Vertex(-1.0f, -1.0f + rtry, -1.0f);			// Right Of Triangle (Back)
-
-            gl.Color(1.0f, 0.0f, 0.0f);			// Red
-            gl.Vertex(0.0f, 1.0f + rtry, 0.0f);			// Top Of Triangle (Left)
-            gl.Color(0.0f, 0.0f, 1.0f);			// Blue
-            gl.Vertex(-1.0f, -1.0f + rtry, -1.0f);			// Left Of Triangle (Left)
-            gl.Color(0.0f, 1.0f, 0.0f);			// Green
-            gl.Vertex(-1.0f, -1.0f + rtry, 1.0f);			// Right Of Triangle (Left)
-            gl.End();                       // Done Drawing The Pyramid
-
-
-
-            gl.Flush();
-
-            rtri += 3.0f;// 0.2f;						// Increase The Rotation Variable For The Triangle  
-            if (flag) rtry += 0.1f; else rtry -= 0.1f;
-            if (rtry >= 0.5f) flag = false;
-            if (rtry <= -0.5f) flag = true;
-        }
-
-
-
-        //private void openGLControl1_Render(object sender, EventArgs e)
-        //{
-
-        //}
     }
 }

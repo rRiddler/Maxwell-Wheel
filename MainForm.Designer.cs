@@ -34,10 +34,10 @@ namespace Maxwell_Wheel
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.sidePanel = new System.Windows.Forms.Panel();
             this.sidePanelButton = new System.Windows.Forms.Button();
-            this.openGLControl1 = new SharpGL.OpenGLControl();
+            this.mainScene = new SharpGL.SceneControl();
             this.tabSheetSidePanel.SuspendLayout();
             this.sidePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.openGLControl1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mainScene)).BeginInit();
             this.SuspendLayout();
             // 
             // tabSheetSidePanel
@@ -102,22 +102,21 @@ namespace Maxwell_Wheel
             this.sidePanelButton.UseVisualStyleBackColor = true;
             this.sidePanelButton.Click += new System.EventHandler(this.button1_Click);
             // 
-            // openGLControl1
+            // mainScene
             // 
-            this.openGLControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.mainScene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.openGLControl1.DrawFPS = true;
-            this.openGLControl1.FrameRate = 30;
-            this.openGLControl1.Location = new System.Drawing.Point(0, 0);
-            this.openGLControl1.Name = "openGLControl1";
-            this.openGLControl1.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
-            this.openGLControl1.RenderContextType = SharpGL.RenderContextType.FBO;
-            this.openGLControl1.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
-            this.openGLControl1.Size = new System.Drawing.Size(1264, 678);
-            this.openGLControl1.TabIndex = 2;
-            this.openGLControl1.OpenGLDraw += new SharpGL.RenderEventHandler(this.openGLControl1_OpenGLDraw);
-            this.openGLControl1.Load += new System.EventHandler(this.openGLControl1_Load);
+            this.mainScene.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.mainScene.DrawFPS = true;
+            this.mainScene.FrameRate = 144;
+            this.mainScene.Location = new System.Drawing.Point(0, 0);
+            this.mainScene.Name = "mainScene";
+            this.mainScene.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
+            this.mainScene.RenderContextType = SharpGL.RenderContextType.FBO;
+            this.mainScene.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
+            this.mainScene.Size = new System.Drawing.Size(1280, 720);
+            this.mainScene.TabIndex = 2;
             // 
             // MainForm
             // 
@@ -126,13 +125,13 @@ namespace Maxwell_Wheel
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1264, 681);
             this.Controls.Add(this.sidePanel);
-            this.Controls.Add(this.openGLControl1);
+            this.Controls.Add(this.mainScene);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "Maxwell\'s Wheel Virtual Laboratory";
             this.tabSheetSidePanel.ResumeLayout(false);
             this.sidePanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.openGLControl1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mainScene)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -144,7 +143,7 @@ namespace Maxwell_Wheel
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Panel sidePanel;
         private System.Windows.Forms.Button sidePanelButton;
-        private SharpGL.OpenGLControl openGLControl1;
+        private SharpGL.SceneControl mainScene;
     }
 }
 
