@@ -23,10 +23,11 @@ namespace Maxwell_Wheel
 
         static public void ProgressTime()
         {
-            for(int i = 0; i < 100; i += 10)
+            for (int i = 0; i < 100; i += 10)
             {
                 System.Threading.Thread.Sleep(10);
-                splashForm.progressBar1.Invoke((MethodInvoker)delegate {
+                splashForm.progressBar1.Invoke((MethodInvoker)delegate
+                {
                     // Running on the UI thread
                     splashForm.progressBar1.Value = i;
                 });
@@ -35,7 +36,11 @@ namespace Maxwell_Wheel
 
         static private void ShowForm()
         {
-            if (splashForm != null) Application.Run(splashForm);
+            if (splashForm != null)
+            {
+                splashForm.CenterToScreen();
+                Application.Run(splashForm);
+            }
         }
 
         static public void CloseForm()
