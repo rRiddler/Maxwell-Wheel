@@ -110,7 +110,7 @@ namespace Maxwell_Wheel
             this.mainScene.Cursor = System.Windows.Forms.Cursors.Hand;
             this.mainScene.DrawFPS = true;
             this.mainScene.FrameRate = 144;
-            this.mainScene.Location = new System.Drawing.Point(0, 0);
+            this.mainScene.Location = new System.Drawing.Point(-14, -32);
             this.mainScene.Name = "mainScene";
             this.mainScene.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
             this.mainScene.RenderContextType = SharpGL.RenderContextType.FBO;

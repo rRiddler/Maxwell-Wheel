@@ -35,8 +35,8 @@ namespace Maxwell_Wheel
             mainScene.MouseUp += new MouseEventHandler(sceneControl_MouseUp);
             // Let's load ducky
             var obj = new ObjFileFormat();
-            var objScene = obj.LoadData(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "Wheel.obj"));
-
+            var objScene = obj.LoadData(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "Full.obj"));
+            var objBase = obj.LoadData(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "Full.obj"));
             // Add the materials to the scene
             foreach (var asset in objScene.Assets)
                 mainScene.Scene.Assets.Add(asset);
@@ -73,6 +73,40 @@ namespace Maxwell_Wheel
                 polygon.AddEffect(arcBallEffect);
             }
 
+            foreach (var asset in objBase.Assets)
+                mainScene.Scene.Assets.Add(asset);
+
+            // Get the polygons
+            var polygonsBase = objBase.SceneContainer.Traverse<Polygon>().ToList();
+
+            // Add each polygon (There is only one in ducky.obj)
+            foreach (var polygon in polygonsBase)
+            {
+                polygon.Name = "Qube";
+                polygon.Transformation.RotateX = 90f; // So that Ducky appears in the right orientation
+
+                //  Get the bounds of the polygon.
+                var boundingVolume = polygon.BoundingVolume;
+                var extent = new float[3];
+                polygon.BoundingVolume.GetBoundDimensions(out extent[0], out extent[1], out extent[2]);
+
+                // Get the max extent.
+                var maxExtent = extent.Max();
+
+                // Scale so that we are at most 10 units in size.
+                var scaleFactor = maxExtent > 10 ? 10.0f / maxExtent : 1;
+
+                polygon.Parent.RemoveChild(polygon);
+                polygon.Transformation.ScaleX = scaleFactor;
+                polygon.Transformation.ScaleY = scaleFactor;
+                polygon.Transformation.ScaleZ = scaleFactor;
+                polygon.Freeze(mainScene.OpenGL);
+                mainScene.Scene.SceneContainer.AddChild(polygon);
+
+                // Add effects.
+                polygon.AddEffect(new OpenGLAttributesEffect());
+                polygon.AddEffect(arcBallEffect);
+            }
         }
 
         private void sceneControl_MouseDown(object sender, MouseEventArgs e)
@@ -112,4 +146,6 @@ namespace Maxwell_Wheel
 
 
     }
+
+
 }
