@@ -6,8 +6,8 @@ namespace Maxwell_Wheel
         public const float pi = 3.1415926f;
         public const float g = 9.80665f;
         static public float flag = 1;
-        static public float k = momentInert / (wheelRad * wheelRad) + wheelMass;
-        static public float a = -wheelMass * g / (k * 60);
+        static public float k = momentInert / (wheelRad * wheelRad) + (wheelMass + hingeMass);
+        static public float a = -(wheelMass + hingeMass) * g / (k * 3600);
 
         static public float hingeLength = 0.1f;
         static public float hingeRad = 0.005f;
@@ -33,6 +33,7 @@ namespace Maxwell_Wheel
         static public float energyPotential = wheelMass * g * height;
         static public float energyKinetic = energyFull - energyPotential;
         static public float velocity = 0;
+        static public float move = velocity + a / 2;
         static public float w = velocity * 180 / (wheelRad * pi);
         /// <summary>
         /// Обязательная переменная конструктора.
@@ -83,8 +84,8 @@ namespace Maxwell_Wheel
             // 
             // tabSheetSidePanel
             // 
-            this.tabSheetSidePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabSheetSidePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabSheetSidePanel.Appearance = System.Windows.Forms.TabAppearance.Buttons;
             this.tabSheetSidePanel.Controls.Add(this.tabPage1);
@@ -233,7 +234,7 @@ namespace Maxwell_Wheel
             // 
             // sidePanel
             // 
-            this.sidePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.sidePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.sidePanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.sidePanel.Controls.Add(this.sidePanelButton);
@@ -258,8 +259,8 @@ namespace Maxwell_Wheel
             // 
             // mainScene
             // 
-            this.mainScene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.mainScene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mainScene.Cursor = System.Windows.Forms.Cursors.Hand;
             this.mainScene.DrawFPS = true;

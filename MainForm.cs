@@ -24,25 +24,32 @@ namespace Maxwell_Wheel
 
         public MainForm()
         {
+
+            hingeLength = 0.1f;
+            hingeRad = 0.0028f;
+            hingeDense = aluminumDense;
+            hingeMass = hingeDense * pi * hingeRad * hingeRad * hingeLength;
+
             height = stringLength - stringLengthMin;
             heightMax = stringLengthMax;
-            stringLength = 0;
-            stringLengthMax = 1; //most low point
             stringLengthMin = wheelRad + 0.01f; //top point
-            wheelRad = 0.004f;
-            wheelWidth = 0.04f;
-            wheelDense = plasticDense;
+            stringLengthMax = 0.23f + stringLengthMin; //most low point
+            stringLength = stringLengthMin;
+            wheelRad = 0.04f;
+            wheelWidth = 0.01f;
+            wheelDense = steelDense;
             wheelMass = pi * wheelRad * wheelRad * wheelDense * wheelWidth;
-            momentInert = wheelMass * (wheelRad * wheelRad / 4 + wheelWidth * wheelWidth / 12) + hingeMass * (hingeRad * hingeRad / 4 + hingeLength * hingeLength / 12);
+            momentInert = wheelMass * (wheelRad * wheelRad) + hingeMass * (hingeRad * hingeRad);
             energyFull = wheelMass * g * heightMax;
             energyPotential = wheelMass * g * height;
             energyKinetic = energyFull - energyPotential;
             velocity = 0;
+            move = velocity + a / 2;
             w = velocity * 180 / (wheelRad * pi);
 
 
-            k = momentInert / (wheelRad * wheelRad) + wheelMass;
-            a = -wheelMass * g / (k * 360);
+            k = momentInert / ((wheelMass + hingeMass) * hingeRad * hingeRad) + 1;
+            a = -g / (k * 3600);
 
             InitializeComponent();
             InitializeScene();
@@ -150,49 +157,65 @@ namespace Maxwell_Wheel
                 var polygonsWheel = mainScene.Scene.SceneContainer.Traverse<Polygon>().Where<Polygon>(x => x.Name == "Wheel").ToList();
                 var polygonsStrings = mainScene.Scene.SceneContainer.Traverse<Polygon>().Where<Polygon>(x => x.Name == "Strings").ToList();
                 bool skip = false;
-                energyPotential = wheelMass * height * g;
-                energyKinetic = energyFull - energyPotential;
+                //energyPotential = wheelMass * height * g;
+                //energyKinetic = energyFull - energyPotential;
                 velocity += a;
-                stringLength -= velocity;
-                height = stringLengthMax - stringLength;
+                //velocity *= 0.995f;
+                move = velocity + a / 2;
+                stringLength -= move;
+                //height = stringLengthMax - stringLength;
                 if (stringLength >= stringLengthMax)
                 {
-                    
+                    velocity -= a;
+                    float d = velocity * velocity - 2 * a * (-move - stringLength + stringLengthMax);
+                    float t = (-velocity - (float)Math.Sqrt(d)) / a;
+                    float move1 = t * velocity + t*t*a/2;
+                    float move2 = -(1 - t) * (velocity + t * a) + (1 - t) * (1 - t) * a / 2;
+                    w = 180 * flag * (move1 - move2) / hingeRad / pi;
                     foreach (var polygon in polygonsWheel)
                     {
                         //polygon.Transformation.TranslateZ += ((velocity  + (stringLength - stringLengthMax)) * 6 + (stringLength - stringLengthMax)) * 0.95f;
-                        polygon.Transformation.TranslateZ += ((velocity + (stringLength - stringLengthMax)) + (stringLength - stringLengthMax))*6; //ITWORKS DONT TOUCH
+
+                        polygon.Transformation.RotateX += w;
+                        polygon.Transformation.TranslateZ += (move1 + move2) * 10; //ITWORKS(NSTU) DO TOUCH
                     }
                     foreach (var polygon in polygonsStrings)
                     {
-                        polygon.Transformation.TranslateZ += ((velocity + (stringLength - stringLengthMax)) + (stringLength - stringLengthMax) * 0.95f)*6; //ITWORKS DONT TOUCH
+                        polygon.Transformation.RotateX += w;
+                        polygon.Transformation.TranslateZ += (move1 + move2) * 10; //ITWORKS(NSTU) DO TOUCH
                     }
                     flag *= -1;
-                    velocity *= -0.95f;
-                    //velocity += a*()
+                    velocity += a * t - a * (1 - t);
+                    velocity *= -0.97f;
                     skip = true;
                     if (velocity < 0.002f && velocity > -0.002f)
                     {
                         velocity = 0;
+                        move = 0;
                         a = 0;
                     }
                     stringLength = 2 * stringLengthMax - stringLength;
                 }
-                w = 180f * flag * velocity / wheelRad / pi;
+                w = 180 * flag * move / hingeRad / pi;
 
                 //wheel
                 foreach (var polygon in polygonsWheel)
                 {
-                    polygon.Transformation.RotateX += w / 60;
                     if (!skip)
-                        polygon.Transformation.TranslateZ += velocity*6;
+                    {
+                        polygon.Transformation.RotateX += w;
+                        polygon.Transformation.TranslateZ += move * 10;
+                    }
                 }
 
                 //strings
                 foreach (var polygon in polygonsStrings)
                 {
                     if (!skip)
-                        polygon.Transformation.TranslateZ += velocity*6;
+                    {
+                        polygon.Transformation.RotateX += w;
+                        polygon.Transformation.TranslateZ += move * 10;
+                    }
                 }
             }
         }
@@ -240,64 +263,35 @@ namespace Maxwell_Wheel
         private void numericStringLength_ValueChanged(object sender, EventArgs e)
         {
             stringLengthMax = (float)numericStringLength.Value;
-
-            height = stringLength - stringLengthMin;
             heightMax = stringLengthMax;
-            stringLengthMin = wheelRad + 0.01f; //top point
-            wheelDense = plasticDense;
-            wheelMass = pi * wheelRad * wheelRad * wheelDense * wheelWidth;
-            momentInert = wheelMass * (wheelRad * wheelRad / 4 + wheelWidth * wheelWidth / 12) + hingeMass * (hingeRad * hingeRad / 4 + hingeLength * hingeLength / 12);
-            energyFull = wheelMass * g * heightMax;
-            energyPotential = wheelMass * g * height;
-            energyKinetic = energyFull - energyPotential;
-            velocity = 0;
-            w = velocity * 180 / (wheelRad * pi);
-
-
-            k = momentInert / (wheelRad * wheelRad) + wheelMass;
-            a = -wheelMass * g / (k * 360);
         }
 
         private void numericUpDownWheelWidth_ValueChanged(object sender, EventArgs e)
         {
             wheelWidth = (float)numericUpDownWheelWidth.Value;
 
-            height = stringLength - stringLengthMin;
-            heightMax = stringLengthMax;
-            stringLengthMin = wheelRad + 0.01f; //top point
-            wheelDense = plasticDense;
             wheelMass = pi * wheelRad * wheelRad * wheelDense * wheelWidth;
             momentInert = wheelMass * (wheelRad * wheelRad / 4 + wheelWidth * wheelWidth / 12) + hingeMass * (hingeRad * hingeRad / 4 + hingeLength * hingeLength / 12);
             energyFull = wheelMass * g * heightMax;
             energyPotential = wheelMass * g * height;
             energyKinetic = energyFull - energyPotential;
-            velocity = 0;
-            w = velocity * 180 / (wheelRad * pi);
-
-
-            k = momentInert / (wheelRad * wheelRad) + wheelMass;
-            a = -wheelMass * g / (k * 360);
+            k = momentInert / (wheelRad * wheelRad) + (wheelMass + hingeMass);
+            a = -(wheelMass + hingeMass) * g / (k * 3600);
         }
 
         private void numericUpDownWheelRad_ValueChanged(object sender, EventArgs e)
         {
             wheelRad = (float)numericUpDownWheelRad.Value;
 
-            height = stringLength - stringLengthMin;
-            heightMax = stringLengthMax;
             stringLengthMin = wheelRad + 0.01f; //top point
-            wheelDense = plasticDense;
+            height = stringLength - stringLengthMin;
             wheelMass = pi * wheelRad * wheelRad * wheelDense * wheelWidth;
             momentInert = wheelMass * (wheelRad * wheelRad / 4 + wheelWidth * wheelWidth / 12) + hingeMass * (hingeRad * hingeRad / 4 + hingeLength * hingeLength / 12);
             energyFull = wheelMass * g * heightMax;
             energyPotential = wheelMass * g * height;
             energyKinetic = energyFull - energyPotential;
-            velocity = 0;
-            w = velocity * 180 / (wheelRad * pi);
-
-
-            k = momentInert / (wheelRad * wheelRad) + wheelMass;
-            a = -wheelMass * g / (k * 360);
+            k = momentInert / (wheelRad * wheelRad) + (wheelMass + hingeMass);
+            a = -(wheelMass + hingeMass) * g / (k * 3600);
         }
 
         private void buttonStart_Click(object sender, EventArgs e)
@@ -309,7 +303,7 @@ namespace Maxwell_Wheel
         private void buttonStop_Click(object sender, EventArgs e)
         {
             toWork = false;
-
+            buttonStart.Text = "Start";
             stringLengthMax = (float)numericStringLength.Value;
             wheelWidth = (float)numericUpDownWheelWidth.Value;
             wheelRad = (float)numericUpDownWheelRad.Value;
@@ -325,11 +319,12 @@ namespace Maxwell_Wheel
             energyPotential = wheelMass * g * height;
             energyKinetic = energyFull - energyPotential;
             velocity = 0;
+            move = velocity + a / 2;
             w = velocity * 180 / (wheelRad * pi);
 
 
-            k = momentInert / (wheelRad * wheelRad) + wheelMass;
-            a = -wheelMass * g / (k * 360);
+            k = momentInert / (wheelRad * wheelRad) + (wheelMass + hingeMass);
+            a = -(wheelMass + hingeMass) * g / (k * 3600);
 
             var polygonsWheel = mainScene.Scene.SceneContainer.Traverse<Polygon>().Where<Polygon>(x => x.Name == "Wheel").ToList();
             var polygonsStrings = mainScene.Scene.SceneContainer.Traverse<Polygon>().Where<Polygon>(x => x.Name == "Strings").ToList();
