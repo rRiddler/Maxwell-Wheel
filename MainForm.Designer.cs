@@ -84,8 +84,8 @@ namespace Maxwell_Wheel
             // 
             // tabSheetSidePanel
             // 
-            this.tabSheetSidePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tabSheetSidePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabSheetSidePanel.Appearance = System.Windows.Forms.TabAppearance.Buttons;
             this.tabSheetSidePanel.Controls.Add(this.tabPage1);
@@ -165,23 +165,23 @@ namespace Maxwell_Wheel
             // 
             // numericUpDownWheelWidth
             // 
-            this.numericUpDownWheelWidth.DecimalPlaces = 2;
+            this.numericUpDownWheelWidth.DecimalPlaces = 3;
             this.numericUpDownWheelWidth.Increment = new decimal(new int[] {
-            10,
+            1,
             0,
             0,
             196608});
             this.numericUpDownWheelWidth.Location = new System.Drawing.Point(12, 125);
             this.numericUpDownWheelWidth.Maximum = new decimal(new int[] {
-            0,
-            8,
-            0,
-            65536});
-            this.numericUpDownWheelWidth.Minimum = new decimal(new int[] {
             5,
             0,
             0,
             131072});
+            this.numericUpDownWheelWidth.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            196608});
             this.numericUpDownWheelWidth.Name = "numericUpDownWheelWidth";
             this.numericUpDownWheelWidth.Size = new System.Drawing.Size(104, 20);
             this.numericUpDownWheelWidth.TabIndex = 1;
@@ -234,7 +234,7 @@ namespace Maxwell_Wheel
             // 
             // sidePanel
             // 
-            this.sidePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.sidePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.sidePanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.sidePanel.Controls.Add(this.sidePanelButton);
@@ -259,8 +259,8 @@ namespace Maxwell_Wheel
             // 
             // mainScene
             // 
-            this.mainScene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.mainScene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mainScene.Cursor = System.Windows.Forms.Cursors.Hand;
             this.mainScene.DrawFPS = true;

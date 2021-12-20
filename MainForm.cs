@@ -181,7 +181,7 @@ namespace Maxwell_Wheel
                     }
                     foreach (var polygon in polygonsStrings)
                     {
-                        polygon.Transformation.RotateX += w;
+                        //polygon.Transformation.RotateX += w;
                         polygon.Transformation.TranslateZ += (move1 + move2) * 10; //ITWORKS(NSTU) DO TOUCH
                     }
                     flag *= -1;
@@ -213,7 +213,7 @@ namespace Maxwell_Wheel
                 {
                     if (!skip)
                     {
-                        polygon.Transformation.RotateX += w;
+                        //polygon.Transformation.RotateX += w;
                         polygon.Transformation.TranslateZ += move * 10;
                     }
                 }
@@ -263,6 +263,7 @@ namespace Maxwell_Wheel
         private void numericStringLength_ValueChanged(object sender, EventArgs e)
         {
             stringLengthMax = (float)numericStringLength.Value;
+
             heightMax = stringLengthMax;
         }
 
@@ -284,6 +285,7 @@ namespace Maxwell_Wheel
             wheelRad = (float)numericUpDownWheelRad.Value;
 
             stringLengthMin = wheelRad + 0.01f; //top point
+            stringLength = stringLengthMin;
             height = stringLength - stringLengthMin;
             wheelMass = pi * wheelRad * wheelRad * wheelDense * wheelWidth;
             momentInert = wheelMass * (wheelRad * wheelRad / 4 + wheelWidth * wheelWidth / 12) + hingeMass * (hingeRad * hingeRad / 4 + hingeLength * hingeLength / 12);
@@ -310,8 +312,8 @@ namespace Maxwell_Wheel
 
             height = stringLength - stringLengthMin;
             heightMax = stringLengthMax;
-            stringLength = 0;
             stringLengthMin = wheelRad + 0.01f; //top point
+            stringLength = stringLengthMin;
             wheelDense = plasticDense;
             wheelMass = pi * wheelRad * wheelRad * wheelDense * wheelWidth;
             momentInert = wheelMass * (wheelRad * wheelRad / 4 + wheelWidth * wheelWidth / 12) + hingeMass * (hingeRad * hingeRad / 4 + hingeLength * hingeLength / 12);
